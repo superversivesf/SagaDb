@@ -57,7 +57,7 @@ namespace SagaDb.Databases
                 .FirstOrDefault(u => u.UserName == username);
         }
 
-        public void InsertBook(User user, UserContext db = null)
+        public void InsertUser(User user, UserContext db = null)
         {
             db = InitContext(db);
 
@@ -65,7 +65,7 @@ namespace SagaDb.Databases
             db.SaveChanges();
         }
 
-        public void UpdateBook(User user, UserContext db = null)
+        public void UpdateUser(User user, UserContext db = null)
         {
             db = InitContext(db);
 

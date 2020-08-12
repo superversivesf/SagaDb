@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -16,6 +17,7 @@ namespace SagaDb.Models
         public string GoodReadsTitle { get; set; }
         public string GoodReadsCoverImage { get; set; }
         public string BookLocation { get; set; }
+        public DateTime ImportAt { get; set; }
     }
 
     public class BookEqualityComparer : EqualityComparer<Book>

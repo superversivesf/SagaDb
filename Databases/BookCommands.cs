@@ -96,6 +96,38 @@ namespace SagaDb.Database
 
         #region Book/File/Author links
 
+        public void RemoveBookToSeriesLinksByBook(Book _book, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            var _links = db.BookSeries.Where(bs => bs.BookId == _book.BookId).ToList();
+            db.BookSeries.RemoveRange(_links);
+        }
+
+        public void RemoveBookToAuthorLinksByBook(Book _book, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            var _links = db.BookAuthors.Where(ba => ba.BookId == _book.BookId).ToList();
+            db.BookAuthors.RemoveRange(_links);
+        }
+
+        public void RemoveBookToAudioLinksAndAudioFilesByBook(Book _book, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            var _links = db.BookFiles.Where(bf => bf.BookId == _book.BookId).ToList();
+
+            foreach (var _link in _links)
+            {
+                var _audioFile = GetAudioFile(_link.FileId);
+                RemoveAudioFile(_audioFile);
+            }
+
+            db.BookFiles.RemoveRange(_links);
+        }
+
+
         public void LinkBookToSeries(Book _book, Series _series, string _bookVolume, BookOrganizerContext db = null)
         {
             db = InitContext(db);
@@ -379,6 +411,14 @@ namespace SagaDb.Database
             db.SaveChanges();
         }
 
+        public void RemoveBook(Book book, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.Books.Remove(book);
+            db.SaveChanges();
+        }
+
         #endregion
 
         #region Authors
@@ -436,6 +476,14 @@ namespace SagaDb.Database
             db.SaveChanges();
         }
 
+        public void RemoveAuthor(Author author, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.Authors.Remove(author);
+            db.SaveChanges();
+        }
+
         #endregion
 
         #region AudioFiles
@@ -461,6 +509,14 @@ namespace SagaDb.Database
 
             db.AudioFiles.Attach(audioFile);
             db.Entry(audioFile).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
+        public void RemoveAudioFile(AudioFile audioFile, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.AudioFiles.Remove(audioFile);
             db.SaveChanges();
         }
 
@@ -517,6 +573,14 @@ namespace SagaDb.Database
             db.Entry(genre).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+        public void RemoveGenre(Genre genre, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.Genres.Remove(genre);
+            db.SaveChanges();
+        }
         #endregion
 
         #region Series
@@ -560,6 +624,14 @@ namespace SagaDb.Database
             db.Entry(series).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+        public void RemoveSeries(Series series, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.Series.Remove(series);
+            db.SaveChanges();
+        }
         #endregion
 
         #region Images
@@ -585,6 +657,14 @@ namespace SagaDb.Database
 
             db.Images.Attach(image);
             db.Entry(image).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
+        public void RemoveImage(DbImage image, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            db.Images.Remove(image);
             db.SaveChanges();
         }
 
