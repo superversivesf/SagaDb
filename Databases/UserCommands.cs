@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SagaUtil;
 
 namespace SagaDb.Databases
 {
@@ -61,6 +62,8 @@ namespace SagaDb.Databases
         {
             db = InitContext(db);
 
+            user.Password = UserHelper.GenerateSaltedHash(user.Password, user.PasswordSalt);
+
             db.Users.Add(user);
             db.SaveChanges();
         }
@@ -68,6 +71,8 @@ namespace SagaDb.Databases
         public void UpdateUser(User user, UserContext db = null)
         {
             db = InitContext(db);
+
+            user.Password = UserHelper.GenerateSaltedHash(user.Password, user.PasswordSalt);
 
             db.Users.Attach(user);
             db.Entry(user).State = EntityState.Modified;

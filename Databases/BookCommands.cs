@@ -101,7 +101,25 @@ namespace SagaDb.Database
             db = InitContext(db);
 
             var _links = db.BookSeries.Where(bs => bs.BookId == _book.BookId).ToList();
-            db.BookSeries.RemoveRange(_links);
+
+            foreach (var link in _links)
+            {
+                db.BookSeries.Remove(link);
+                db.SaveChanges();
+            }
+        }
+        
+        public void RemoveBookToGenreLinksByBook(Book _book, BookOrganizerContext db = null)
+        {
+            db = InitContext(db);
+
+            var _links = db.BookGenres.Where(ba => ba.BookId == _book.BookId).ToList();
+
+            foreach (var link in _links)
+            {
+                db.BookGenres.Remove(link);
+                db.SaveChanges();
+            }
         }
 
         public void RemoveBookToAuthorLinksByBook(Book _book, BookOrganizerContext db = null)
@@ -109,7 +127,12 @@ namespace SagaDb.Database
             db = InitContext(db);
 
             var _links = db.BookAuthors.Where(ba => ba.BookId == _book.BookId).ToList();
-            db.BookAuthors.RemoveRange(_links);
+
+            foreach (var link in _links)
+            {
+                db.BookAuthors.Remove(link);
+                db.SaveChanges();
+            }
         }
 
         public void RemoveBookToAudioLinksAndAudioFilesByBook(Book _book, BookOrganizerContext db = null)
@@ -122,9 +145,9 @@ namespace SagaDb.Database
             {
                 var _audioFile = GetAudioFile(_link.FileId);
                 RemoveAudioFile(_audioFile);
+                db.BookFiles.Remove(_link);
+                db.SaveChanges();
             }
-
-            db.BookFiles.RemoveRange(_links);
         }
 
 
@@ -167,9 +190,22 @@ namespace SagaDb.Database
         {
             db = InitContext(db);
 
-            var _seriesBooks = db.BookSeries.Where(bs => bs.SeriesId == seriesId).ToList().OrderBy(bs => double.Parse(bs.SeriesVolume)).ToList();
+            var _seriesBooks = db.BookSeries.Where(bs => bs.SeriesId == seriesId).ToList().OrderBy(bs => ConvertSeriesVolumeToDouble(bs.SeriesVolume)).ToList();
 
             return _seriesBooks;
+        }
+
+        private double ConvertSeriesVolumeToDouble(string volume)
+        {
+            try
+            {
+                var result = double.Parse(volume);
+                return result;
+            }
+            catch
+            {
+                return 0.0;
+            }
         }
 
         public List<AudioFile> GetAudioFilesByBookId(string bookId, BookOrganizerContext db = null)
